@@ -126,7 +126,7 @@ class JsonWorkflowParser : WorkflowParser {
         val isEnd = stateNode.get(LABEL_END).asBoolean()
         val stateType = stateNode.get(LABEL_TYPE).asText()
 
-        if (StateType.Choice.name != stateType) {
+        if (StateType.Condition.name != stateType) {
             val node = stateNode.get(LABEL_NEXT)
             if (isEnd && !node.isNull) {
                 logger.error("Error: Cannot have end state as true because next state is not null $node")
@@ -143,7 +143,7 @@ class JsonWorkflowParser : WorkflowParser {
                 componentNameSet
             )
 
-            StateType.Choice.name -> createConditionsState(
+            StateType.Condition.name -> createConditionsState(
                 componentName,
                 stateNode,
                 previousState,
@@ -234,12 +234,12 @@ class JsonWorkflowParser : WorkflowParser {
         logger.info("In createConditionsState")
 
         if (isEnd) {
-            logger.error("Error: We cannot end the workflow with ${StateType.Choice.name} state")
-            throw WorkflowParserError("$ERR_INVALID_WORKFLOW, Workflow cannot end with ${StateType.Choice.name} state")
+            logger.error("Error: We cannot end the workflow with ${StateType.Condition.name} state")
+            throw WorkflowParserError("$ERR_INVALID_WORKFLOW, Workflow cannot end with ${StateType.Condition.name} state")
         }
 
         if (!stateNode.has(LABEL_CONDITIONS)) {
-            logger.error("Error: Required $LABEL_CONDITIONS label does not exist in  ${StateType.Choice.name} state")
+            logger.error("Error: Required $LABEL_CONDITIONS label does not exist in  ${StateType.Condition.name} state")
             throw WorkflowParserError("$ERR_INVALID_WORKFLOW, $LABEL_CONDITIONS label does not exist")
         }
 

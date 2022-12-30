@@ -6,7 +6,7 @@ package com.cs.beam.domain
 
 enum class StateType {
     Task,
-    Choice,
+    Condition,
     Wait,
     Parallel
 }
