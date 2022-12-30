@@ -9,10 +9,12 @@
         <version>0.4-SNAPSHOT</version>
     </parent>
 
+    <groupId>com.cs.beam</groupId>
     <artifactId>core</artifactId>
+    <version>0.4-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <name>com.cs core</name>
+    <name>core</name>
+    <description>Beam Core - Reusable and common modules for beam workflow engine</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -61,34 +63,5 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
-
-        <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
