@@ -1,0 +1,200 @@
+{
+  "Name": "Re2Re",
+  "Description": "Generic workflow for RE to RE",
+  "InitState": "ValidateDocuments",
+  "Async": false,
+  "ResultVariable": "finalOutput",
+  "States": {
+    "ValidateDocuments": {
+      "Type": "Task",
+      "Next": "ValidateDocumentsCondition",
+      "End": false
+    },
+    "ValidateDocumentsCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "documentsValid",
+              "MatchType": "StringEquals",
+              "MatchValue": "true"
+            }
+          ],
+          "Next": "AppFormPost"
+        },
+        {
+          "Simple": [
+            {
+              "Variable": "documentsValid",
+              "MatchType": "StringEquals",
+              "MatchValue": "false"
+            }
+          ],
+          "Next": "EndWorkflow"
+        }
+      ]
+    },
+    "AppFormPost": {
+      "Type": "Task",
+      "Next": "AppFormPostCondition",
+      "End": false
+    },
+    "AppFormPostCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "appFormPostStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "CreditPolicyCheck"
+        },
+        {
+          "Simple": [
+            {
+              "Variable": "appFormPostStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "failure"
+            }
+          ],
+          "Next": "EndWorkflow"
+        }
+      ]
+    },
+    "CreditPolicyCheck": {
+      "Type": "Task",
+      "Next": "CreditPolicyCheckCondition",
+      "End": false
+    },
+    "CreditPolicyCheckCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "creditPolicyStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "GreenChannelAlgo"
+        },
+        {
+          "Simple": [
+            {
+              "Variable": "creditPolicyStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "failure"
+            }
+          ],
+          "Next": "EndWorkflow"
+        }
+      ]
+    },
+    "GreenChannelAlgo": {
+      "Type": "Task",
+      "Next": "GreenChannelAlgoCondition",
+      "End": false
+    },
+    "GreenChannelAlgoCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "gcAlgoStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "approved"
+            }
+          ],
+          "Next": "PreApproval"
+        },
+        {
+          "Simple": [
+            {
+              "Variable": "gcAlgoStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "rejected"
+            }
+          ],
+          "Next": "EndWorkflow"
+        }
+      ]
+    },
+    "PreApproval": {
+      "Type": "Task",
+      "Next": "PreApprovalCondition",
+      "End": false
+    },
+    "PreApprovalCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "preApprovalStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "StartGCWorkflow"
+        },
+        {
+          "Simple": [
+            {
+              "Variable": "preApprovalStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "failure"
+            }
+          ],
+          "Next": "EndWorkflow"
+        }
+      ]
+    },
+    "StartGCWorkflow": {
+      "Type": "Task",
+      "Next": "StartGCWorkflowCondition",
+      "End": false
+    },
+    "StartGCWorkflowCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "startGcWorkflowStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "EndWorkflow"
+        },
+        {
+          "Simple": [
+            {
+              "Variable": "startGcWorkflowStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "failure"
+            }
+          ],
+          "Next": "EndWorkflow"
+        }
+      ]
+    },
+    "EndWorkflow": {
+      "Type": "Task",
+      "Next": null,
+      "End": true
+    }
+  }
+}

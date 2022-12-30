@@ -1,0 +1,198 @@
+{
+  "Name": "NonFLDG",
+  "Description": "Async workflow for non-fldg partnership",
+  "InitState": "DocsTransform",
+  "Async": true,
+  "States": {
+    "DocsTransform": {
+      "Type": "Task",
+      "Next": "DocsTransformCondition",
+      "End": false
+    },
+    "DocsTransformCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "isDocsTransformPassed",
+              "MatchType": "StringEquals",
+              "MatchValue": "true"
+            }
+          ],
+          "Next": "CreditPolicyCheck"
+        }
+      ]
+    },
+    "CreditPolicyCheck": {
+      "Type": "Task",
+      "Next": "CreditPolicyCheckCondition",
+      "End": false
+    },
+    "CreditPolicyCheckCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "creditPolicyStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "ParallelAlgo"
+        },
+        {
+          "Simple": [
+            {
+              "Variable": "creditPolicyStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "failure"
+            }
+          ],
+          "Next": "EndWorkflowAndSendCallback"
+        }
+      ]
+    },
+    "ParallelAlgo": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "Name": "Green Channel Algo",
+          "InitState": "GreenChannelAlgo",
+          "States": {
+            "GreenChannelAlgo": {
+              "Type": "Task",
+              "Next": null,
+              "End": true
+            }
+          }
+        },
+        {
+          "Name": "Fraud Check with Sherlock",
+          "InitState": "FraudCheck",
+          "States": {
+            "FraudCheck": {
+              "Type": "Task",
+              "Next": null,
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next":"ParallelAlgoCondition",
+      "End":false
+    },
+    "ParallelAlgoCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "And": [
+            {
+              "Variable": "gcAlgoStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "approved"
+            },
+            {
+              "Variable": "fraudCheckStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "BureauPull"
+        },
+        {
+          "Simple": [
+            {
+              "Variable": "gcAlgoStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "rejected"
+            }
+          ],
+          "Next": "EndWorkflowAndSendCallback"
+        }
+      ]
+    },
+    "BureauPull": {
+      "Type": "Task",
+      "Next": "BureauPullCondition",
+      "End": false
+    },
+    "BureauPullCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "bureauPullStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "WaitForBureauReport"
+        }
+      ]
+    },
+    "WaitForBureauReport": {
+      "Type": "Wait",
+      "Next": "FinalOffer",
+      "End": false
+    },
+    "FinalOffer": {
+      "Type": "Task",
+      "Next": "FinalOfferCondition",
+      "End": false
+    },
+    "FinalOfferCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "finalOfferStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "WaitForFinalOfferResult"
+        }
+      ]
+    },
+    "WaitForFinalOfferResult": {
+      "Type": "Wait",
+      "Next": "AppFormUpdate",
+      "End": false
+    },
+    "AppFormUpdate": {
+      "Type": "Task",
+      "Next": "AppFormUpdateCondition",
+      "End": false
+    },
+    "AppFormUpdateCondition": {
+      "Type": "Condition",
+      "End": false,
+      "Conditions": [
+        {
+          "Simple": [
+            {
+              "Variable": "appFormUpdateStatus",
+              "MatchType": "StringEquals",
+              "MatchValue": "success"
+            }
+          ],
+          "Next": "EndWorkflowAndSendCallback"
+        }
+      ]
+    },
+    "EndWorkflowAndSendCallback": {
+      "Type": "Task",
+      "Next": null,
+      "End": true
+    }
+  }
+}
